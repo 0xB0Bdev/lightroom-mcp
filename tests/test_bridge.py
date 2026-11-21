@@ -48,7 +48,8 @@ class FakePlugin:
                     conn.sendall(b"ok\r\n")  # Lightroom acknowledges each line this way
                     reply = self.handler(request)
                     if reply is not None:
-                        (self.response_dir / f"{request['reply']}.json").write_text(json.dumps(reply))
+                        text = reply if isinstance(reply, str) else json.dumps(reply)  # str: raw reply
+                        (self.response_dir / f"{request['reply']}.json").write_text(text)
             conn.close()
 
     def close(self):
@@ -87,6 +88,13 @@ def test_error_response_raises(fake):
     fake(lambda r: {"id": r["id"], "ok": False, "error": "No photo with id 7"})
     with pytest.raises(bridge.BridgeError, match="No photo with id 7"):
         bridge.call("organize.rate", {"ids": [7], "rating": 3})
+
+
+def test_malformed_reply_raises(fake):
+    plugin = fake(lambda r: '{"id": 1, "ok": tr')
+    with pytest.raises(bridge.BridgeError, match="unreadable reply to 'ping'"):
+        bridge.call("ping", timeout=5)
+    assert list(plugin.response_dir.iterdir()) == []
 
 
 def test_connection_is_released_between_calls(fake):
