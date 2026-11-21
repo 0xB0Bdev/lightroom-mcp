@@ -33,9 +33,16 @@ def catalog_path() -> Path:
         return Path(env).expanduser()
     if DEFAULT_CATALOG.exists():
         return DEFAULT_CATALOG
-    candidates = sorted((HOME / "Pictures/Lightroom").glob("*.lrcat"))
+    folder = HOME / "Pictures/Lightroom"
+    candidates = sorted(folder.glob("*.lrcat"))
     if len(candidates) == 1:
         return candidates[0]
+    if candidates:
+        names = ", ".join(c.name for c in candidates)
+        raise FileNotFoundError(
+            f"Found {len(candidates)} Lightroom catalogs in {folder}: {names}. "
+            "Set LIGHTROOM_CATALOG to the path of the one to use."
+        )
     raise FileNotFoundError(
         "No Lightroom catalog found. Set LIGHTROOM_CATALOG to the path of your .lrcat file."
     )
