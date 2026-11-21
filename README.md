@@ -123,3 +123,7 @@ uv run pytest
 ```
 
 Install the bridge with `--link` to work on the Lua handlers in place; `lightroom-mcp plugins reload` picks up edits to any of the plugin's Lua files without restarting Lightroom.
+
+## License
+
+[MIT](LICENSE)
