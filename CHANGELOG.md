@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.1.3 (2026-11-21)
+
+### Bug Fixes
+
+- Open catalogs whose path contains #, % or ?
+  ([`1b8fc44`](https://github.com/0xB0Bdev/lightroom-mcp/commit/1b8fc44e3b5923546823fcda59aa79697c323ca0))
+
+
 ## v0.1.2 (2026-11-21)
 
 ### Bug Fixes
