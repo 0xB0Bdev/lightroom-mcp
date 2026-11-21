@@ -4,12 +4,16 @@ from __future__ import annotations
 
 import json
 import socket
+import struct
 import threading
 
 import pytest
 
 from lightroom_mcp import bridge
 from lightroom_mcp.core import develop, organize, target
+
+# A crash in the fake plugin's thread otherwise shows up only as a later timeout.
+pytestmark = pytest.mark.filterwarnings("error::pytest.PytestUnhandledThreadExceptionWarning")
 
 
 class FakePlugin:
@@ -35,22 +39,28 @@ class FakePlugin:
                 self.drop_connections -= 1
                 conn.close()  # accepted, then dropped unread, as Lightroom does while re-listening
                 continue
-            buffer = b""
-            while True:
-                chunk = conn.recv(65536)
-                if not chunk:
-                    break
-                buffer += chunk
-                while b"\n" in buffer:
-                    line, _, buffer = buffer.partition(b"\n")
-                    request = json.loads(line)
-                    self.requests.append(request)
-                    conn.sendall(b"ok\r\n")  # Lightroom acknowledges each line this way
-                    reply = self.handler(request)
-                    if reply is not None:
-                        text = reply if isinstance(reply, str) else json.dumps(reply)  # str: raw reply
-                        (self.response_dir / f"{request['reply']}.json").write_text(text)
-            conn.close()
+            with conn:
+                try:
+                    self._handle(conn)
+                except OSError:
+                    pass  # the client hung up mid-exchange; keep serving the next one
+
+    def _handle(self, conn):
+        buffer = b""
+        while True:
+            chunk = conn.recv(65536)
+            if not chunk:
+                return
+            buffer += chunk
+            while b"\n" in buffer:
+                line, _, buffer = buffer.partition(b"\n")
+                request = json.loads(line)
+                self.requests.append(request)
+                conn.sendall(b"ok\r\n")  # Lightroom acknowledges each line this way
+                reply = self.handler(request)
+                if reply is not None:
+                    text = reply if isinstance(reply, str) else json.dumps(reply)  # str: raw reply
+                    (self.response_dir / f"{request['reply']}.json").write_text(text)
 
     def close(self):
         self.server.close()
@@ -102,6 +112,15 @@ def test_connection_is_released_between_calls(fake):
     assert bridge.call("ping") == "pong"
     assert bridge._shared._sock is None  # the plugin serves one client at a time
     assert bridge.call("ping") == "pong"
+
+
+def test_fake_plugin_survives_a_reset_connection(fake):
+    # A client that closes with the "ok" still unread resets the connection on Linux.
+    plugin = fake(lambda r: {"id": r["id"], "ok": True, "result": "pong"})
+    client = socket.create_connection(("127.0.0.1", plugin.port))
+    client.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, struct.pack("ii", 1, 0))
+    client.close()
+    assert bridge.call("ping", timeout=5) == "pong"
 
 
 def test_resends_when_the_connection_drops_before_the_acknowledgement(fake):
