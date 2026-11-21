@@ -3,7 +3,7 @@ return {
     LrSdkMinimumVersion = 6.0,
     LrToolkitIdentifier = "com.lightroommcp.bridge",
     LrPluginName = "Lightroom MCP Bridge",
-    LrPluginInfoUrl = "https://github.com/",
+    LrPluginInfoUrl = "https://github.com/0xB0Bdev/lightroom-mcp",
 
     LrInitPlugin = "Init.lua",
     LrForceInitPlugin = true,
@@ -17,5 +17,5 @@ return {
         { title = "Bridge Status", file = "StatusMenu.lua" },
     },
 
-    VERSION = { major = 0, minor = 1, revision = 1 },
+    VERSION = { major = 0, minor = 1, revision = 0 },
 }
