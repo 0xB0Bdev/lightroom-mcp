@@ -1,0 +1,23 @@
+[project]
+name = "lightroom-mcp"
+version = "0.1.0"
+description = "CLI and MCP server for Adobe Lightroom Classic"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=4.2.2",
+    "pydantic>=2.14.3",
+    "typer>=0.29.2",
+]
+
+[project.scripts]
+lightroom-mcp = "lightroom_mcp.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
