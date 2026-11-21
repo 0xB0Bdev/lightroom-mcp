@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v0.1.4 (2026-11-21)
+
+### Bug Fixes
+
+- Name the catalogs when several are found
+  ([`1a82e81`](https://github.com/0xB0Bdev/lightroom-mcp/commit/1a82e8135d74ac9e8981ca40f4e66a6eda6fb568))
+
+### Continuous Integration
+
+- Support immutable GitHub releases
+  ([`f196d5d`](https://github.com/0xB0Bdev/lightroom-mcp/commit/f196d5d027b90dba43f2933de31ad89c5bef90be))
+
+### Documentation
+
+- Point changelog commit links at the rewritten history
+  ([`a02ac9e`](https://github.com/0xB0Bdev/lightroom-mcp/commit/a02ac9ee9f95dc131fd6a2cb5185e913a55827e3))
+
+
 ## v0.1.3 (2026-11-21)
 
 ### Bug Fixes

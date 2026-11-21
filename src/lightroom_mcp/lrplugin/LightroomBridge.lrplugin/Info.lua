@@ -17,5 +17,5 @@ return {
         { title = "Bridge Status", file = "StatusMenu.lua" },
     },
 
-    VERSION = { major = 0, minor = 1, revision = 3 },
+    VERSION = { major = 0, minor = 1, revision = 4 },
 }
