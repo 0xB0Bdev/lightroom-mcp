@@ -1,6 +1,6 @@
 [project]
 name = "lightroom-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "CLI and MCP server for Adobe Lightroom Classic"
 readme = "README.md"
 requires-python = ">=3.11"
