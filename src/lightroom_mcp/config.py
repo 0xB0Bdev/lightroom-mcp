@@ -45,7 +45,13 @@ def bridge_port() -> int:
     """Command port: env override, else what the plugin last wrote, else the default."""
     env = os.environ.get("LIGHTROOM_BRIDGE_PORT")
     if env:
-        return int(env)
+        try:
+            port = int(env)
+        except ValueError:
+            port = 0
+        if not 1 <= port <= 65535:
+            raise ValueError(f"LIGHTROOM_BRIDGE_PORT must be a port number from 1 to 65535, got {env!r}")
+        return port
     try:
         return int(json.loads(BRIDGE_STATE_FILE.read_text())["commandPort"])
     except (OSError, ValueError, KeyError, TypeError):
