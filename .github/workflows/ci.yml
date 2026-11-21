@@ -100,12 +100,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      # The GitHub release is created in the next step, not by semantic-release.
       - name: Semantic release (version, changelog, tag, push)
         id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          uvx --from "python-semantic-release~=10.7" semantic-release -v version
+          uvx --from "python-semantic-release~=10.7" semantic-release -v version --no-vcs-release
           if tag=$(git describe --exact-match --tags HEAD 2>/dev/null); then
             echo "released=true" >> "$GITHUB_OUTPUT"
             echo "tag=$tag" >> "$GITHUB_OUTPUT"
@@ -113,11 +114,21 @@ jobs:
             echo "released=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Publish GitHub release assets
+      # Releases are immutable once published, so attach the files to a draft first.
+      - name: Create GitHub release
         if: steps.release.outputs.released == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: uvx --from "python-semantic-release~=10.7" semantic-release -v publish
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          notes="$RUNNER_TEMP/notes.md"
+          awk -v heading="## $TAG " 'index($0, heading) == 1 {on = 1; next} on && /^## v/ {exit} on' CHANGELOG.md > "$notes"
+          if ! grep -q '[^[:space:]]' "$notes"; then
+            echo "::error::No CHANGELOG.md section for $TAG"; exit 1
+          fi
+          gh release create "$TAG" dist/lightroom_mcp-"${TAG#v}"* --repo "$GITHUB_REPOSITORY" \
+            --draft --verify-tag --title "$TAG" --notes-file "$notes"
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false
 
       # Releases made with GITHUB_TOKEN don't trigger other workflows, but dispatches do.
       - name: Publish to PyPI

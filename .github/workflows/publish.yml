@@ -1,15 +1,15 @@
 name: Publish
 
-# Publishes the files attached to a GitHub release to PyPI using trusted publishing.
-# CI's release job dispatches this after semantic-release cuts a release; run it by hand
-# to publish an existing release. PyPI only trusts this file, so it must stay a top-level
-# workflow rather than one called from ci.yml.
+# Builds a release tag and publishes it to PyPI using trusted publishing. CI's release
+# job dispatches this after semantic-release cuts a release; run it by hand to publish an
+# existing tag. PyPI only trusts this file, so it must stay a top-level workflow rather
+# than one called from ci.yml.
 
 on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Release tag to publish, e.g. v0.1.1
+        description: Release tag to publish, e.g. v0.1.3
         required: true
         type: string
 
@@ -30,20 +30,32 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - name: Download release files
+      - name: Check the tag
         env:
-          GH_TOKEN: ${{ github.token }}
           TAG: ${{ inputs.tag }}
         run: |
           if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error::'$TAG' is not a release tag like v1.2.3"; exit 1
           fi
-          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir dist \
-            --pattern "lightroom_mcp-${TAG#v}-py3-none-any.whl" \
-            --pattern "lightroom_mcp-${TAG#v}.tar.gz"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          enable-cache: false
+
+      - name: Build
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          uv build
           ls -l dist
-          if [ "$(ls dist | wc -l)" -ne 2 ]; then
-            echo "::error::Expected a wheel and an sdist for $TAG"; exit 1
+          version="${TAG#v}"
+          if [ ! -f "dist/lightroom_mcp-$version-py3-none-any.whl" ] || [ ! -f "dist/lightroom_mcp-$version.tar.gz" ]; then
+            echo "::error::Building $TAG did not produce version $version"; exit 1
           fi
 
       - name: Publish to PyPI
