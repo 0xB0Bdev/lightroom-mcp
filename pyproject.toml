@@ -6,11 +6,34 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 license-files = ["LICENSE"]
+authors = [{ name = "0xB0Bdev" }]
+keywords = ["lightroom", "lightroom-classic", "adobe", "mcp", "model-context-protocol", "photography", "cli"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Environment :: MacOS X",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: MacOS",
+    "Programming Language :: Lua",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Graphics",
+]
 dependencies = [
     "fastmcp>=4.2.2",
     "pydantic>=2.14.3",
     "typer>=0.29.2",
 ]
+
+[project.urls]
+Homepage = "https://github.com/0xB0Bdev/lightroom-mcp"
+Source = "https://github.com/0xB0Bdev/lightroom-mcp"
+Issues = "https://github.com/0xB0Bdev/lightroom-mcp/issues"
+Changelog = "https://github.com/0xB0Bdev/lightroom-mcp/blob/main/CHANGELOG.md"
 
 [project.scripts]
 lightroom-mcp = "lightroom_mcp.cli:main"
@@ -32,7 +55,8 @@ allow_zero_version = true
 major_on_zero = false
 build_command = """
 uv lock --upgrade-package lightroom-mcp
-git add uv.lock
+uv run --no-project python scripts/sync_plugin_version.py
+git add uv.lock src/lightroom_mcp/lrplugin/LightroomBridge.lrplugin/Info.lua
 uv build
 """
 

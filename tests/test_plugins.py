@@ -4,6 +4,7 @@ import json
 import plistlib
 import shutil
 import subprocess
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -56,6 +57,14 @@ def test_read_info_of_bundled_bridge_plugin():
     info = plugins.read_info(config.BRIDGE_PLUGIN_SOURCE)
     assert info["id"] == config.BRIDGE_PLUGIN_ID
     assert {"menu": "Library > Plug-in Extras", "title": "Bridge Status"} in info["menu_items"]
+
+
+def test_bridge_plugin_version_matches_package():
+    pyproject = tomllib.loads((Path(__file__).parent.parent / "pyproject.toml").read_text())
+    info = plugins.read_info(config.BRIDGE_PLUGIN_SOURCE)
+    assert info["version"] == pyproject["project"]["version"], (
+        "Run scripts/sync_plugin_version.py to update Info.lua"
+    )
 
 
 def test_install_list_uninstall(env):

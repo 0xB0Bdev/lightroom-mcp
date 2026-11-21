@@ -447,6 +447,9 @@ def app_restart(wait: float = typer.Option(60, help="Seconds to wait for the bri
 
 
 def main() -> None:
+    if sys.platform != "darwin":
+        print("Error: lightroom-mcp only runs on macOS.", file=sys.stderr)
+        sys.exit(1)
     try:
         app()
     except (bridge.BridgeError, ValueError, LookupError, OSError, RuntimeError) as exc:

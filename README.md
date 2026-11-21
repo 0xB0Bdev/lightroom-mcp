@@ -126,4 +126,4 @@ Install the bridge with `--link` to work on the Lua handlers in place; `lightroo
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/0xB0Bdev/lightroom-mcp/blob/main/LICENSE)
