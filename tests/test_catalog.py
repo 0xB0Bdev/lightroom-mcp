@@ -101,6 +101,17 @@ def test_catalog_is_opened_read_only(catalog_file):
             conn.execute("UPDATE Adobe_images SET rating = 1")
 
 
+@pytest.mark.parametrize("name", ["Catalog #2.lrcat", "Catalog 50%25.lrcat", "What?.lrcat"])
+def test_catalog_path_with_uri_characters(catalog_file, monkeypatch, name):
+    path = catalog_file.rename(catalog_file.with_name(name))
+    monkeypatch.setenv("LIGHTROOM_CATALOG", str(path))
+    assert catalog.summary()["photos"] == 4
+    with catalog.connect() as conn:
+        with pytest.raises(Exception, match="readonly"):
+            conn.execute("UPDATE Adobe_images SET rating = 1")
+    assert [p.name for p in path.parent.iterdir()] == [name]  # nothing created beside it
+
+
 def test_luatable_prefs_shape():
     text = 't = {\n\t["/a/b.lrplugin"] = "/a/b.lrplugin",\n\t["/c d/e.lrplugin"] = true,\n}\n'
     assert luatable.parse(text) == {"/a/b.lrplugin": "/a/b.lrplugin", "/c d/e.lrplugin": True}
