@@ -118,11 +118,18 @@ class Bridge:
                 self._send(payload)
                 while True:
                     try:
-                        message = json.loads(reply_file.read_text())
+                        text = reply_file.read_text()
                     except FileNotFoundError:
-                        pass
-                    else:
+                        text = ""
+                    # An empty file has been created but not yet written; keep waiting.
+                    if text:
                         reply_file.unlink(missing_ok=True)
+                        try:
+                            message = json.loads(text)
+                        except json.JSONDecodeError as error:
+                            raise BridgeError(
+                                f"Lightroom sent an unreadable reply to '{command}': {error}"
+                            ) from error
                         break
                     if time.monotonic() >= deadline:
                         raise BridgeError(
