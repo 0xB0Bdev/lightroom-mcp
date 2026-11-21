@@ -25,19 +25,25 @@ Reads go straight to the catalog file, opened read-only. Anything that changes L
 
 ## Setup
 
-```bash
-uv sync
-```
+Install the `lightroom-mcp` command:
 
 ```bash
-uv run lightroom-mcp plugins bridge-install --restart
+uv tool install lightroom-mcp
 ```
 
-The second command copies the bridge plugin into `~/Library/Application Support/Adobe/Lightroom/Modules/` and restarts Lightroom so it loads. Check it with:
+(or `pipx install lightroom-mcp`). Then install the bridge plugin:
 
 ```bash
-uv run lightroom-mcp status
+lightroom-mcp plugins bridge-install --restart
 ```
+
+This copies the plugin into `~/Library/Application Support/Adobe/Lightroom/Modules/` and restarts Lightroom so it loads. Check it with:
+
+```bash
+lightroom-mcp status
+```
+
+After upgrading lightroom-mcp, run `bridge-install` again so the plugin matches.
 
 ## Usage
 
@@ -78,7 +84,7 @@ lightroom-mcp app restart
 `lightroom-mcp mcp` runs a FastMCP server over stdio. To add it to Claude Code:
 
 ```bash
-claude mcp add lightroom -- uv --directory /path/to/lightroom-mcp run lightroom-mcp mcp
+claude mcp add lightroom -- uvx lightroom-mcp mcp
 ```
 
 Or in a JSON MCP config (Claude Desktop and others):
@@ -87,8 +93,8 @@ Or in a JSON MCP config (Claude Desktop and others):
 {
   "mcpServers": {
     "lightroom": {
-      "command": "uv",
-      "args": ["--directory", "/path/to/lightroom-mcp", "run", "lightroom-mcp", "mcp"]
+      "command": "uvx",
+      "args": ["lightroom-mcp", "mcp"]
     }
   }
 }
@@ -119,10 +125,13 @@ The bridge listens on localhost only and has no authentication: any local proces
 ## Development
 
 ```bash
+git clone https://github.com/0xB0Bdev/lightroom-mcp.git
+cd lightroom-mcp
+uv sync
 uv run pytest
 ```
 
-Install the bridge with `--link` to work on the Lua handlers in place; `lightroom-mcp plugins reload` picks up edits to any of the plugin's Lua files without restarting Lightroom.
+Run the CLI from the checkout with `uv run lightroom-mcp …`. Install the bridge with `--link` to work on the Lua handlers in place; `lightroom-mcp plugins reload` picks up edits to any of the plugin's Lua files without restarting Lightroom.
 
 ## License
 
