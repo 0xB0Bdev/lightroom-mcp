@@ -60,7 +60,8 @@ def connect(path: Path | None = None) -> Iterator[sqlite3.Connection]:
     if not path.exists():
         raise FileNotFoundError(f"Catalog not found: {path}")
     tmpdir: str | None = None
-    conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=2)
+    # as_uri() percent-encodes characters such as # ? % that would otherwise end the path.
+    conn = sqlite3.connect(f"{path.resolve().as_uri()}?mode=ro", uri=True, timeout=2)
     try:
         conn.execute("SELECT 1 FROM Adobe_images LIMIT 1").fetchone()
     except sqlite3.OperationalError as exc:
