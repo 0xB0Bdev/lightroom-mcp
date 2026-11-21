@@ -7,7 +7,7 @@
 ### Bug Fixes
 
 - Open catalogs whose path contains #, % or ?
-  ([`1b8fc44`](https://github.com/0xB0Bdev/lightroom-mcp/commit/1b8fc44e3b5923546823fcda59aa79697c323ca0))
+  ([`32afab8`](https://github.com/0xB0Bdev/lightroom-mcp/commit/32afab8c3e915c69eadbe8860b2efdfa6f9db467))
 
 
 ## v0.1.2 (2026-11-21)
@@ -15,17 +15,17 @@
 ### Bug Fixes
 
 - Reject an invalid LIGHTROOM_BRIDGE_PORT with a clear error"
-  ([`ec1eeb0`](https://github.com/0xB0Bdev/lightroom-mcp/commit/ec1eeb04d00aaedf5c152bde92523d5f02a7c735))
+  ([`b80b116`](https://github.com/0xB0Bdev/lightroom-mcp/commit/b80b1163f8fd6a95fb8d0004eebf4d906c82af88))
 
 ### Continuous Integration
 
 - Introduce publish flow
-  ([`98a61dd`](https://github.com/0xB0Bdev/lightroom-mcp/commit/98a61dd3b5184cf91ee6550564f5debec692fe26))
+  ([`30b8a90`](https://github.com/0xB0Bdev/lightroom-mcp/commit/30b8a90b2d213e7888e2cc96bc5ca213a9d3389c))
 
 ### Testing
 
 - Keep the fake bridge plugin serving after a reset connection
-  ([`7019195`](https://github.com/0xB0Bdev/lightroom-mcp/commit/7019195310d24554ddb83f40ca9d44834fa4e737))
+  ([`832d42a`](https://github.com/0xB0Bdev/lightroom-mcp/commit/832d42aca494069c5d0ce7178b8dfd4860b8f6ba))
 
 
 ## v0.1.1 (2026-11-21)
@@ -33,17 +33,17 @@
 ### Bug Fixes
 
 - Prepare package for PyPI
-  ([`639381d`](https://github.com/0xB0Bdev/lightroom-mcp/commit/639381d7c77fb20160348fca2fdbbdea05561c9a))
+  ([`25f3228`](https://github.com/0xB0Bdev/lightroom-mcp/commit/25f32284ed43808ec60fa40ceeff5d7a69a63b84))
 
 ### Chores
 
 - Add licence
-  ([`373ed2b`](https://github.com/0xB0Bdev/lightroom-mcp/commit/373ed2b7e47918818b1ade5f881abb7aa292f873))
+  ([`9c58bb9`](https://github.com/0xB0Bdev/lightroom-mcp/commit/9c58bb95269921d05004c7a75302a05605f0144d))
 
 ### Continuous Integration
 
 - Bump the actions group with 2 updates
-  ([`3096a26`](https://github.com/0xB0Bdev/lightroom-mcp/commit/3096a26f6ff96de1b76f09173158babc5f987e4b))
+  ([`316f03f`](https://github.com/0xB0Bdev/lightroom-mcp/commit/316f03fe41a4d01d716e61534562aa97248faac1))
 
 
 ## v0.1.0 (2026-11-21)
